@@ -1,8 +1,0 @@
-﻿  pch.cpp
-  dllmain.cpp
-  Hook.cpp
-  Code wird generiert.
-  Previous IPDB not found, fall back to full compilation.
-  All 4 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
-  Codegenerierung ist abgeschlossen.
-  MoonBar.ExplorerPatch.vcxproj -> C:\Users\Uther\source\repos\MoonBar.ExplorerPatch\x64\Release\MoonBar.ExplorerPatch.dll
