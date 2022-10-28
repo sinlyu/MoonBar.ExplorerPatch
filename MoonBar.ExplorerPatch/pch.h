@@ -7,7 +7,12 @@
 #ifndef PCH_H
 #define PCH_H
 
-// Fügen Sie hier Header hinzu, die vorkompiliert werden sollen.
-#include "framework.h"
+
+#include <stdlib.h>     // for _itoa_s functions, _countof, count macro
+#include <stdio.h>      // for printf
+#include <string.h>     // for strnlen
+#include <iostream>
+#include <Windows.h>
+#include <map>
 
 #endif //PCH_H

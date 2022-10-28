@@ -1,8 +1,5 @@
-#include "pch.h"
 #include "Hook.h"
 
-
-LONG_PTR Hook::oriWndProc = NULL;
 
 LRESULT __stdcall Hook::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -10,11 +7,18 @@ LRESULT __stdcall Hook::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	{
 	case WM_NCCALCSIZE:
 	case WM_WINDOWPOSCHANGED:
-		return 0;
+	case WM_MOVE:
+	case WM_SIZE:
+	case WM_WINDOWPOSCHANGING:
+	case WM_MOVING:
+		return LRESULT(0);
 		break;
 	default:
 		break;
 	}
 
-	return CallWindowProcW((WNDPROC)Hook::oriWndProc, hWnd, uMsg, wParam, lParam);
+
+	auto wndProc = Globals::HwndWndProcs.at(hWnd);
+
+	return CallWindowProcW((WNDPROC)wndProc, hWnd, uMsg, wParam, lParam);
 }

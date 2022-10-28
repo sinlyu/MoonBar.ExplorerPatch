@@ -1,12 +1,7 @@
 // dllmain.cpp : Definiert den Einstiegspunkt für die DLL-Anwendung.
-#include "pch.h"
+#include "dllmain.h"
 
-#include <stdlib.h>     // for _itoa_s functions, _countof, count macro
-#include <stdio.h>      // for printf
-#include <string.h>     // for strnlen
-#include "Hook.h"
 
-#define SIZEOF(f) (sizeof(f) / sizeof(f[0]))
 
 typedef struct ENUM_WIN_INFO {
   DWORD dwProcID;
@@ -44,7 +39,6 @@ BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 
 void Start()
 {
-
   ENUM_WIN_INFO ewi = { 0 };
   memset(&ewi, 0, sizeof(ewi));
   ewi.dwProcID = GetCurrentProcessId();
@@ -57,11 +51,26 @@ void Start()
     return;
   }
 
-  // iterate trough all task bars
+  // iterate trough all taskbars
   for (int i = 0; i < ewi.nNextHWNDIndex; i++)
   {
     HWND wnd = ewi.hFoundHWNDs[i];
-    SetWindowLongPtr(wnd, GWLP_WNDPROC, (LONG_PTR)Hook::WndProc);
+    if (wnd == NULL) {
+      continue;
+    }
+    
+    if (i == 0) {
+      // if we are hooking the primary taskbar we use the handle we found
+      LONG_PTR oriWndProc = GetWindowLongPtr(wnd, GWLP_WNDPROC);
+      SetWindowLongPtr(wnd, GWLP_WNDPROC, (LONG_PTR)Hook::WndProc);
+      Globals::HwndWndProcs.insert(std::pair(wnd, oriWndProc));
+    } else {
+      // any secondary taskbar we get the ancestor ( parent ) 
+      HWND parentHwnd = GetAncestor(wnd, 1);
+      LONG_PTR oriWndProc = GetWindowLongPtr(parentHwnd, GWLP_WNDPROC);
+      SetWindowLongPtr(parentHwnd, GWLP_WNDPROC, (LONG_PTR)Hook::WndProc);
+      Globals::HwndWndProcs.insert(std::pair(parentHwnd, oriWndProc));
+    }
   }
 }
 
